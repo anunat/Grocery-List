@@ -4,9 +4,9 @@
   <% if !@user.shoppinglists.last.nil? %>
 
   <% if !@user.shoppinglists.last.listitems.first.nil? %>
-  <h3><strong>Shopping List</strong> <a href="/users/editlist" class="btn btn-lg btn-primary">Back</a></h3>
+  <h3><strong>Shopping List</strong> <a href="/friends" class="btn btn-lg btn-primary">Back</a></h3>
   <% else %>
-  <h3><strong>Shopping List Empty</strong> <a href="/users/editlist" class="btn btn-lg btn-primary">Back</a></h3>
+  <h3><strong>Shopping List Empty</strong> <a href="/friends" class="btn btn-lg btn-primary">Back</a></h3>
   <% end %>
   <% end %>
 </div>

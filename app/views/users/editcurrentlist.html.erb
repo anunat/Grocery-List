@@ -1,9 +1,17 @@
+<% if !current_user.items.first.nil? %>
 <div class="page-header" style="text-align:left">
   <h2>
     <a href="/create_freshlist" class="btn btn-lg btn-success">Fresh List</a>
     <a href="/create_defaultlist" class="btn btn-lg btn-success">Default List</a>
   </h2>
 </div>
+<% else %>
+<div class="page-header" style="text-align:left">
+  <h3><i class="fa fa-info-circle"></i> Get started by adding items !</h3>
+  <a href="/items" class="btn btn-lg btn-primary">Add Items</a>
+</div>
+<% end %>
+
 <% if !current_user.shoppinglists.last.nil? %>
 <% dept = {} %>
 <%current_user.shoppinglists.last.listitems.each do |litem| %>
@@ -34,17 +42,15 @@
   <div class = "row">
     <div class ="col-md-6">
 
-      <% if current_user.shoppinglists.last.nil? %>
-      <h3><i class="fa fa-info-circle"></i> Start a Fresh List or Default List</h3>
-      <% end %>
-
       <% if !current_user.shoppinglists.last.nil? %>
-      <% if current_user.items.count != current_user.shoppinglists.last.listitems.count%>
+      <% if (current_user.items.count != current_user.shoppinglists.last.listitems.count)%>
 
       <h3><strong>Available Items</strong></h3>
       <% else %>
+      <% if (current_user.items.count !=0) %>
       <h3><strong>No Available Items</strong> </h3>
       <a href="/items" class="btn btn-lg btn-primary">Add Items</a>
+      <%end %>
       <% end %>
 
 

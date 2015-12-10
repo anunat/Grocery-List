@@ -11,7 +11,8 @@
     <table class="table table-striped table-hover">
       <tr>
         <th>Friend</th>
-        <th>Actions</th>
+        <th>View</th>
+        <th>Delete</th>
       </tr>
 
       <% @friends.each do |friend| %>
@@ -19,8 +20,10 @@
         <td><%= friend.user.email %></td>
         <td>
           <%  if !Friend.find_by(:user_id => friend.friend_id, :friend_id => current_user.id).nil? %>
-          <a href="/friends/showlist/<%= friend.user.id %>" class="btn btn-primary">Shopping List</a>
+          <a href="/friends/showlist/<%= friend.user.id %>" class="btn btn-primary">View List</a>
           <% end %>
+        </td>
+        <td>
           <a href="/delete_friend/<%= friend.id %>" class="btn btn-danger" rel="nofollow">Delete</a>
         </td>
       </tr>
