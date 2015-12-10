@@ -1,0 +1,68 @@
+<div class="page-header">
+  <h2>
+    <strong>Items</strong>
+    <a href="/items/new" class="btn btn-lg btn-success"><i class="fa fa-plus"></i></a>
+    <a href="/adddefaultitems" class="btn btn-lg btn-success">Add Starter Items</a>
+    <a href="/users/manage" class="btn btn-lg btn-primary">Back</a>
+
+  </h2>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <table class="table">
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Default qty</th>
+        <th>Unit</th>
+        <th>Favorite</th>
+        <th>Actions</th>
+      </tr>
+
+      <% @items.each do |item| %>
+      <tr>
+        <td>
+          <div class = "imgcont">
+            <img src="<%= item.image %>" class="img-responsive">
+          </div>
+        </td>
+
+        <td style="vertical-align:middle"><%= item.name %></td>
+        <td style="vertical-align:middle"><%= item.department.name %></td>
+        <td style="vertical-align:middle"><%= number_to_human(item.default_qty, precision: 6, strip_insignificant_zeros: true) %></td>
+        <td style="vertical-align:middle"><%= item.unit.name %></td>
+
+        <td>
+          <% if item.favorite == true %>
+          <form action="/update_favitem/<%= item.id %>" method="post" enctype="multipart/form-data">
+            <!-- Hidden input for authenticity token to protect from forgery -->
+            <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+            <input type="hidden" name="favorite" class="form-control" value="<%= !item.favorite %>">
+
+            <button class="btn btn-link">
+              <i class="fa fa-heart"></i>
+            </button>
+          </form>
+          <%else %>
+          <form action="/update_favitem/<%= item.id %>" method="post" enctype="multipart/form-data">
+            <!-- Hidden input for authenticity token to protect from forgery -->
+            <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+            <input type="hidden" name="favorite" class="form-control" value="<%= !item.favorite %>">
+            <button class="btn btn-link">
+              <i class="fa fa-heart-o"></i>
+            </button>
+          </form>
+          <%end %>
+        </td>
+
+        <td style="vertical-align:middle">
+          <a href="/items/<%= item.id %>/edit" class="btn btn-warning"><i class="fa fa-pencil"></i></a>
+          <a href="/delete_item/<%= item.id %>" class="btn btn-danger" rel="nofollow"><i class="fa fa-trash"></i></a>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>

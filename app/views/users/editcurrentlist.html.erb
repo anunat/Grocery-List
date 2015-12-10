@@ -1,0 +1,289 @@
+<div class="page-header" style="text-align:left">
+  <h2>
+    <a href="/create_freshlist" class="btn btn-lg btn-success">Fresh List</a>
+    <a href="/create_defaultlist" class="btn btn-lg btn-success">Default List</a>
+  </h2>
+</div>
+<% if !current_user.shoppinglists.last.nil? %>
+<% dept = {} %>
+<%current_user.shoppinglists.last.listitems.each do |litem| %>
+<% dept_name = Department.find(litem.item.department_id).name %>
+<% if dept[dept_name]  %>
+<% dept[dept_name].push(litem) %>
+<% else %>
+<% dept[dept_name] = [litem] %>
+<% end %>
+<% end %>
+<% end %>
+
+<% if !current_user.shoppinglists.last.nil? %>
+<% idept = {} %>
+<%current_user.items.each do |ditem| %>
+<% if !current_user.shoppinglists.last.nil? && ditem.listitems.find_by(item_id: ditem.id, shoppinglist_id: current_user.shoppinglists.last.id).nil? %>
+<% idept_name = Department.find(ditem.department_id).name %>
+<% if idept[idept_name]  %>
+<% idept[idept_name].push(ditem) %>
+<% else %>
+<% idept[idept_name] = [ditem] %>
+<% end %>
+<% end %>
+<% end %>
+<% end %>
+
+<div class = "container">
+  <div class = "row">
+    <div class ="col-md-6">
+
+      <% if current_user.shoppinglists.last.nil? %>
+      <h3><i class="fa fa-info-circle"></i> Start a Fresh List or Default List</h3>
+      <% end %>
+
+      <% if !current_user.shoppinglists.last.nil? %>
+      <% if current_user.items.count != current_user.shoppinglists.last.listitems.count%>
+
+      <h3><strong>Available Items</strong></h3>
+      <% else %>
+      <h3><strong>No Available Items</strong> </h3>
+      <a href="/items" class="btn btn-lg btn-primary">Add Items</a>
+      <% end %>
+
+
+      <% idept.each do |idept_name, ditem| %>
+      <h4><%= idept_name %></h4>
+      <table class = "table">
+        <% ditem.each do |item| %>
+
+        <% if !current_user.shoppinglists.last.nil? && item.listitems.find_by(item_id: item.id, shoppinglist_id:
+
+          current_user.shoppinglists.last.id).nil? %>
+
+          <tr>
+
+            <td style="vertical-align:middle">
+              <% if item.favorite == true %>
+              <form action="/update_favitem/<%= item.id %>" method="post" enctype="multipart/form-data">
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+                <input type="hidden" name="favorite" class="form-control" value="<%= !item.favorite %>">
+
+                <button class="btn btn-link">
+                  <i class="fa fa-heart"></i>
+                </button>
+              </form>
+              <%else %>
+              <form action="/update_favitem/<%= item.id %>" method="post" enctype="multipart/form-data">
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+                <input type="hidden" name="favorite" class="form-control" value="<%= !item.favorite %>">
+                <button class="btn btn-link">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </form>
+              <%end %>
+            </td>
+
+            <td style="vertical-align:middle">
+              <div class = "imgcont">
+                <img src="<%= item.image %>" class="img-responsive">
+              </div>
+            </td >
+
+            <td style="vertical-align:middle; min-width:100px;"><strong  style="font-size:15px;"><%= item.name %></strong></td>
+
+            <% if item.default_qty == 1 || item.unit.name == "nos"%>
+            <td style="vertical-align:middle; min-width:25px;"><strong style="font-size:15px;"><%= item.unit.name %></strong></td>
+            <% else %>
+            <% if item.unit.name == "box" %>
+            <td style="vertical-align:middle; min-width:25px;"><strong style="font-size:15px;"><%= item.unit.name %>es</strong></td>
+            <% else %>
+            <td style="vertical-align:middle; min-width:25px;"><strong style="font-size:15px;"><%= item.unit.name %>(s)</strong></td>
+            <% end %>
+            <% end %>
+
+            <td style="vertical-align:middle">
+              <form action="/create_listitem" method="post" class = "form-inline">
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+                <input type="hidden" name="shoppinglist_id" class="form-control" value="<%=
+
+                current_user.shoppinglists.last.id %>">
+                <input type="hidden" name="item_id" class="form-control" value="<%= item.id %>">
+                <!-- Label and input for quantity -->
+                <!-- Label and input for quantity -->
+                <div class="form-group">
+                  <input type="text" id="quantity" name="quantity" placeholder="Quantity" class="form-control"
+
+                  value="<%= number_to_human(item.default_qty, precision: 2, strip_insignificant_zeros: true)%>">
+                </div>
+
+                <button class="btn btn-link">
+                  <i class="fa fa-shopping-cart fa-2x"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          <% end %>
+          <% end %>
+        </table>
+        <% end %>
+        <% end %>
+      </div>
+
+
+      <div class ="col-md-6">
+        <% if !current_user.shoppinglists.last.nil? %>
+
+        <% if !current_user.shoppinglists.last.listitems.first.nil? %>
+        <h3><strong>Shopping List</strong></h3>
+        <% else %>
+        <h3><strong>Shopping List Empty</strong></h3>
+        <% end %>
+
+
+        <% dept.each do |dept_name, litem| %>
+        <h4><%= dept_name %></h4>
+        <table class = "table">
+          <% litem.each do |listitem| %>
+
+          <!-- <table class="table"> -->
+          <tr>
+
+            <td style="vertical-align:middle">
+              <% if listitem.item.favorite == true %>
+              <form action="/update_favitem/<%= listitem.item_id %>" method="post" enctype="multipart/form-data">
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+                <input type="hidden" name="favorite" class="form-control" value="<%= !listitem.item.favorite %>">
+
+                <button class="btn btn-link">
+                  <i class="fa fa-heart"></i>
+                </button>
+              </form>
+              <%else %>
+              <form action="/update_favitem/<%= listitem.item_id %>" method="post" enctype="multipart/form-data">
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+                <input type="hidden" name="favorite" class="form-control" value="<%= !listitem.item.favorite %>">
+                <button class="btn btn-link">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </form>
+              <%end %>
+            </td>
+            <td style="vertical-align:middle">
+              <div class = "imgcont">
+                <img src="<%= listitem.item.image %>" class="img-responsive">
+              </div>
+            </td>
+            <td style="vertical-align:middle; min-width:100px;"><strong style="font-size:15px;"><%= listitem.item.name %></strong></td>
+
+            <td>
+              <form action="/update_listitem/<%= listitem.id %>" class = "form-inline" method="post">
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+                <!-- Label and input for notes -->
+                <input type="hidden" id="notes" name="notes" value="<%= listitem.notes %>">
+
+                <!-- Label and input for shoppinglist_id -->
+                <input type="hidden" id="shoppinglist_id" name="shoppinglist_id" class="form-control" value="<%= listitem.shoppinglist_id %>">
+
+                <!-- Label and input for item_id -->
+                <input type="hidden" id="item_id" name="item_id" class="form-control" value="<%= listitem.item_id %>">
+
+                <!-- Label and input for quantity -->
+                <div class="form-group">
+                  <input type="text" id="quantity" name="quantity" placeholder="Quantity" class="form-control" value="<%= number_to_human(listitem.quantity, precision: 2,
+
+                  strip_insignificant_zeros: true) %>">
+                </div>
+                <button class="btn btn-xs btn-primary">
+                  Update
+                </button>
+              </form>
+            </td>
+
+            <% if listitem.quantity == 1 || listitem.item.unit.name == "nos"%>
+            <td style="vertical-align:middle; min-width:50px;"><strong style="font-size:15px;"><%= listitem.item.unit.name %></strong></td>
+            <% else %>
+            <% if listitem.item.unit.name == "box" %>
+            <td style="vertical-align:middle; min-width:50px;"><strong style="font-size:15px;"><%= listitem.item.unit.name %>es</strong></td>
+            <% else %>
+            <td style="vertical-align:middle; min-width:50px;"><strong style="font-size:15px;"><%= listitem.item.unit.name %>(s)</strong></td>
+            <% end %>
+            <% end %>
+
+
+            <td style="vertical-align:middle">
+              <form action="/update_listitem/<%= listitem.id %>" class = "form-inline" method="post">
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+                <!-- Label and input for notes -->
+                <input type="hidden" id="notes" name="notes" value="<%= listitem.notes %>">
+
+                <!-- Label and input for shoppinglist_id -->
+                <input type="hidden" id="shoppinglist_id" name="shoppinglist_id" class="form-control" value="<%= listitem.shoppinglist_id %>">
+
+                <!-- Label and input for item_id -->
+                <input type="hidden" id="item_id" name="item_id" class="form-control" value="<%= listitem.item_id %>">
+
+                <!-- Label and input for quantity -->
+                <input type="hidden" id="quantity" name="quantity" placeholder="Quantity" class="form-control" value="<%= number_to_human(listitem.quantity+1, precision: 2,
+
+                strip_insignificant_zeros: true) %>">
+                <button class="btn btn-link">
+                  <i class="fa fa-plus-square fa-2x greeniconcolor"></i>
+                </button>
+              </form>
+            </td>
+
+            <td style="vertical-align:middle">
+              <form action="/update_listitem/<%= listitem.id %>" class = "form-inline" method="post">
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+                <!-- Label and input for notes -->
+                <input type="hidden" id="notes" name="notes" value="<%= listitem.notes %>">
+
+                <!-- Label and input for shoppinglist_id -->
+                <input type="hidden" id="shoppinglist_id" name="shoppinglist_id" class="form-control" value="<%= listitem.shoppinglist_id %>">
+
+                <!-- Label and input for item_id -->
+                <input type="hidden" id="item_id" name="item_id" class="form-control" value="<%= listitem.item_id %>">
+
+                <!-- Label and input for quantity -->
+                <input type="hidden" id="quantity" name="quantity" placeholder="Quantity" class="form-control" value="<%= number_to_human(listitem.quantity-1, precision: 2,
+
+                strip_insignificant_zeros: true) %>">
+                <button class="btn btn-link">
+                 <i class="fa fa-minus-square fa-2x rediconcolor"></i>
+               </button>
+             </form>
+           </td>
+
+           <td style="vertical-align:middle">
+            <form action="/delete_listitem/<%= listitem.id %>" class = "form-inline">
+              <!-- Hidden input for authenticity token to protect from forgery -->
+              <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+              <!-- Label and input for quantity -->
+              <input type="hidden" id="quantity" name="quantity" placeholder="Quantity" class="form-control" value="<%= number_to_human(listitem.quantity, precision: 2,
+
+              strip_insignificant_zeros: true) %>">
+
+              <button class="btn btn-link">
+                <i class="fa fa-trash-o fa-2x"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+
+        <% end %>
+      </table>
+      <% end %>
+      <!--</table>  -->
+    </div>
+    <% end %>
+  </div>
+</div>
+

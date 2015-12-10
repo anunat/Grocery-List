@@ -1,0 +1,90 @@
+<!-- Validation failure messages -->
+<% if @item.errors.any? %>
+<% @item.errors.full_messages.each do |message| %>
+<div class="alert alert-dismissable alert-danger">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <%= message %>
+</div>
+<% end %>
+<% end %>
+
+<div class="page-header">
+  <h2><strong>Edit Item</strong></h2>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <form action="/update_item/<%= @item.id %>" method="post" enctype="multipart/form-data">
+      <!-- Hidden input for authenticity token to protect from forgery -->
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+      <!-- Label and input for name -->
+      <div class="form-group">
+        <label for="name" class="control-label">
+          Name
+        </label>
+
+        <input type="text" id="name" name="name" placeholder="Name" class="form-control" value="<%= @item.name %>">
+      </div>
+
+      <!-- Label and input for department_id -->
+      <div class="form-group">
+        <label for="department_id" class="control-label">
+          Department
+        </label>
+
+        <%= select_tag(:department_id, options_from_collection_for_select(current_user.departments.all, :id, :name, @item.department_id), :class => "form-control") %>
+
+        <a href="/departments/new">or add a new Department</a>
+      </div>
+
+      <!-- Label and input for default_qty -->
+      <div class="form-group">
+        <label for="default_qty" class="control-label">
+          Default qty
+        </label>
+
+        <input type="text" id="default_qty" name="default_qty" placeholder="Default qty" class="form-control" value="<%= number_to_human(@item.default_qty, precision: 6, strip_insignificant_zeros: true) %>">
+      </div>
+
+      <!-- Label and input for unit_id -->
+      <div class="form-group">
+        <label for="unit_id" class="control-label">
+          Unit
+        </label>
+
+        <%= select_tag(:unit_id, options_from_collection_for_select(current_user.units.all, :id, :name, @item.unit_id), :class => "form-control") %>
+
+        <a href="/units/new">or add a new Unit</a>
+      </div>
+
+      <!-- Label and input for favorite -->
+      <div class="checkbox">
+        <label for="favorite">
+          <input type="checkbox" id="favorite" name="favorite" value="1" <%= "checked" if @item.favorite %>>
+          Favorite
+        </label>
+      </div>
+
+      <!-- Label and input for user_id -->
+      <div class="form-group">
+        <input type="hidden" name="user_id" class="form-control" value="<%= current_user.id %>">
+      </div>
+
+      <!-- Label and input for image -->
+      <div class="form-group">
+        <label for="image" class="control-label">
+          Image
+        </label>
+        <!-- <img src="<%= @item.image %>" class="img-responsive" width = "200"> -->
+        <input type="file" id="image" name="image" class="form-control">
+      </div>
+
+      <button class="btn btn-warning">
+        Update Item
+      </button>
+      or
+      <a href="/items">Cancel</a>
+    </form>
+  </div>
+</div>

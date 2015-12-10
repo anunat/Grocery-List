@@ -1,0 +1,64 @@
+<!-- Validation failure messages -->
+<% if @listitem.errors.any? %>
+<% @listitem.errors.full_messages.each do |message| %>
+<div class="alert alert-dismissable alert-danger">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <%= message %>
+</div>
+<% end %>
+<% end %>
+
+<div class="page-header">
+  <h3>Edit Listitem #<%= @listitem.id %></h3>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <form action="/update_listitem/<%= @listitem.id %>" method="post">
+      <!-- Hidden input for authenticity token to protect from forgery -->
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+      <!-- Label and input for notes -->
+      <div class="form-group">
+        <label for="notes" class="control-label">
+          Notes
+        </label>
+
+        <textarea id="notes" name="notes" placeholder="Notes" class="form-control" rows="3"><%= @listitem.notes %></textarea>
+      </div>
+
+      <!-- Label and input for shoppinglist_id -->
+      <div class="form-group">
+        <label for="shoppinglist_id" class="control-label">
+          Shoppinglist
+        </label>
+
+        <input type="text" id="shoppinglist_id" name="shoppinglist_id" placeholder="Shoppinglist" class="form-control" value="<%= @listitem.shoppinglist_id %>">
+      </div>
+
+      <!-- Label and input for item_id -->
+      <div class="form-group">
+        <label for="item_id" class="control-label">
+          Item
+        </label>
+
+        <input type="text" id="item_id" name="item_id" placeholder="Item" class="form-control" value="<%= @listitem.item_id %>">
+      </div>
+
+      <!-- Label and input for quantity -->
+      <div class="form-group">
+        <label for="quantity" class="control-label">
+          Quantity
+        </label>
+
+        <input type="text" id="quantity" name="quantity" placeholder="Quantity" class="form-control" value="<%= @listitem.quantity %>">
+      </div>
+
+      <button class="btn btn-warning">
+        Update Listitem
+      </button>
+      or
+      <a href="/listitems/<%= @listitem.id %>">Cancel</a>
+    </form>
+  </div>
+</div>

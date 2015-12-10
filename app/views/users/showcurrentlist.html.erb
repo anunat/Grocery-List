@@ -1,0 +1,75 @@
+
+<div class="page-header" style="text-align:left">
+
+  <% if !current_user.shoppinglists.last.nil? %>
+
+  <% if !current_user.shoppinglists.last.listitems.first.nil? %>
+  <h3><strong>Shopping List</strong> <a href="/users/editlist" class="btn btn-lg btn-primary">Back</a></h3>
+  <% else %>
+  <h3><strong>Shopping List Empty</strong> <a href="/users/editlist" class="btn btn-lg btn-primary">Back</a></h3>
+  <% end %>
+  <% end %>
+</div>
+
+<% if !current_user.shoppinglists.last.nil? %>
+<% dept = {} %>
+<%current_user.shoppinglists.last.listitems.each do |litem| %>
+<% dept_name = Department.find(litem.item.department_id).name %>
+<% if dept[dept_name]  %>
+<% dept[dept_name].push(litem) %>
+<% else %>
+<% dept[dept_name] = [litem] %>
+<% end %>
+<% end %>
+<% end %>
+
+<div class = "container">
+  <div class = "row">
+    <div class ="col-md-6">
+      <% if !current_user.shoppinglists.last.nil? %>
+
+
+      <% dept.each do |dept_name, litem| %>
+      <h4><%= dept_name %></h4>
+      <table class = "table">
+        <% litem.each do |listitem| %>
+
+        <!-- <table class="table"> -->
+        <tr>
+
+          <td style="vertical-align:middle">
+            <div style="height: 50px; overflow:auto;" class = "imgcont">
+              <img src="<%= listitem.item.image %>" class="img-responsive">
+            </div>
+          </td>
+
+          <td style="vertical-align:middle; min-width:100px;"><strong style="font-size:15px;"><%= listitem.item.name %></strong></td>
+
+          <td style="vertical-align:middle"><strong style="font-size:15px;"><%= number_to_human(listitem.quantity, precision: 2,
+
+            strip_insignificant_zeros: true) %></strong></td>
+
+
+
+            <% if listitem.quantity == 1 || listitem.item.unit.name == "nos"%>
+            <td style="vertical-align:middle; min-width:50px;"><strong style="font-size:15px;"><%= listitem.item.unit.name %></strong></td>
+            <% else %>
+            <% if listitem.item.unit.name == "box" %>
+            <td style="vertical-align:middle; min-width:50px;"><strong style="font-size:15px;"><%= listitem.item.unit.name %>es</strong></td>
+            <% else %>
+            <td style="vertical-align:middle; min-width:50px;"><strong style="font-size:15px;"><%= listitem.item.unit.name %>(s)</strong></td>
+            <% end %>
+            <% end %>
+
+
+
+
+            <% end %>
+          </table>
+          <% end %>
+          <!--</table>  -->
+        </div>
+        <% end %>
+      </div>
+    </div>
+

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GroceryList</title>
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.5/spacelab/bootstrap.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <style>
+    /* Only necessary if you are using navbar-fixed-top */
+    body {
+      padding-top: 60px;
+
+    }
+
+    .rediconcolor {color:red;}
+    .greeniconcolor {color:green;}
+    .fixed-panel {
+      min-height: 10;
+      max-height: 10;
+    }
+
+    .labelcolor{color:red;}
+
+    .background
+    {
+      background-image: url(/assets/images/main.jpg);
+      background-repeat:no-repeat;
+      background-size:cover;
+    }
+
+    .imgcont {
+      width: 40px;
+      height: 20px;
+    }
+
+    /* resize images */
+    .imgcont img {
+      width: 100%;
+      height: auto;
+    }
+
+    .noborder
+    {
+      border:none;
+    }
+
+  </style>
+
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-
+
+        collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand"><i class="fa fa-shopping-basket"></i> GroceryList</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <% if user_signed_in? %>
+        <li><a href="/users/editlist"><i class="fa fa-list"></i> Create List</a></li>
+        <li><a href="/users/showlist"><i class="fa fa-list"></i> Printable List</a></li>
+        <li><a href="/shoppinglists"><i class="fa fa-archive"></i> Shopping History</a></li>
+        <li><a href="/friends"><i class="fa fa-user"></i> Friends</a></li>
+        <li><a href="/users/manage"><i class="fa fa-wrench"></i> Manage Items</a></li>
+        <% end %>
+      </ul>
+
+      <% if user_signed_in? %>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/users/edit"><i class="fa fa-pencil-square-o"></i> <%= current_user.email %></a></li>
+        <li><a href="/users/sign_out" data-method="delete" rel="nofollow"><i class="fa fa-sign-out"></i> Sign
+
+          Out</a></li>
+        </ul>
+        <% else %>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/users/sign_in">Sign In</a></li>
+          <li><a href="/users/sign_up">Sign Up</a></li>
+        </ul>
+        <% end %>
+
+      </div><!-- /.navbar-collapse -->
+    </div>
+  </nav>
+
+  <div class="container">
+    <% if notice.present? %>
+    <div class="alert alert-dismissable alert-success">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= notice %>
+    </div>
+    <% end %>
+
+    <% if alert.present? %>
+    <div class="alert alert-dismissable alert-warning">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <%= alert %>
+    </div>
+    <% end %>
+
+    <%= yield %>
+  </div>
+</body>
+</html>
