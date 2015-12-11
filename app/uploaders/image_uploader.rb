@@ -21,7 +21,7 @@ class ImageUploader < CarrierWave::Uploader::Base
   # end
 
   def default_url
-    'default.jpg'
+    'assets/default.jpg'
   end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
